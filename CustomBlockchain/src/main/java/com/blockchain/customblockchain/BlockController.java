@@ -21,7 +21,7 @@ public class BlockController {
     }
 
     @GetMapping("/mine")
-    JSONObject mine(){
+    Block mine(){
         Block lastBlock = blockchain.getLastBlock();
         int lastProof = lastBlock.getProof();
         int proof = Blockchain.PoW(lastProof);
@@ -32,7 +32,7 @@ public class BlockController {
         String prevhash = Block.hashBlock(lastBlock);
         Block block = blockchain.addBlock(prevhash, proof);
 
-        return block.toJSON();
+        return block;
     }
 
     // @PostMapping("/transactions/new")
