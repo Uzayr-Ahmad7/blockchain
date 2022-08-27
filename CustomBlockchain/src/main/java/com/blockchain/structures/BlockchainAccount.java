@@ -6,7 +6,7 @@ import org.json.simple.JSONObject;
 public class BlockchainAccount {
     private final String id;
     private float balance;
-    private String userName;
+    private String username;
     private String password;
     private final String nodeID;
     private JSONArray transactionHist;
@@ -22,7 +22,7 @@ public class BlockchainAccount {
     public BlockchainAccount(String id, String username, String password, String nodeID){
         this.id = id;
         this.balance = 0;
-        this.userName = username;
+        this.username = username;
         this.password = password;
         this.nodeID = nodeID;
         this.transactionHist = new JSONArray();

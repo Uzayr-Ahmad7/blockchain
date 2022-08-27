@@ -14,6 +14,7 @@ public class Transaction {
         this.recipient = recipient;
         this.amount = amount;
         this.timestamp = System.currentTimeMillis();
+        this.jsonTransaction = new JSONObject();
 
         jsonTransaction.put("sender", this.sender);
         jsonTransaction.put("recipient", this.recipient);

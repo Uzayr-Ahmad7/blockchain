@@ -35,9 +35,16 @@ public class Blockchain {
         transactions = new JSONArray();
         blockCount = 0;
         accounts = new HashMap<String, BlockchainAccount>();
+        accountIDs = new HashSet<String>();
 
         //Create Genesis Block
-        addBlock("1", 100);
+        createGenesis();
+    }
+
+    public Block createGenesis(){
+        chain[0] = new Block(0, transactions, "1", 100);
+        blockCount++;
+        return chain[0];
     }
 
     public Block addBlock(String prevhash, int proof){
@@ -142,7 +149,7 @@ public class Blockchain {
         String str = String.valueOf(lastProof*currentProof);
         String guess = Block.hashString(str);
 
-        return guess.substring(guess.length()-4) == "0000";
+        return guess.substring(guess.length()-4).equals("0000");
     }
 
     public boolean registerNode(String address) throws MalformedURLException{
@@ -179,10 +186,10 @@ public class Blockchain {
         return true;
     }
 
-    private BlockchainAccount addAccount(){
+    public BlockchainAccount addAccount(){
         UUID uuid = UUID.randomUUID();
         String id = String.valueOf(uuid);
-
+        
         if(!accountIDs.add(id)) {
             return addAccount();
         }
@@ -194,7 +201,7 @@ public class Blockchain {
 
     }
 
-    private BlockchainAccount addAccount(String nodeID){
+    public BlockchainAccount addAccount(String nodeID){
         UUID uuid = UUID.randomUUID();
         String id = String.valueOf(uuid);
 
@@ -207,5 +214,17 @@ public class Blockchain {
 
         return account;
 
+    }
+
+    public BlockchainAccount[] getAccounts(){
+        int size = accountIDs.size();
+        BlockchainAccount[] accountsArr = new BlockchainAccount[size];
+        int count = 0;
+
+        for(String key: accounts.keySet()){
+            accountsArr[count] = accounts.get(key);
+            count++;
+        }
+        return accountsArr;
     }
 }
