@@ -6,16 +6,17 @@ import org.json.simple.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class Block {
     private final int index;
     private final long timestamp;
-    private final JSONArray transactions;
+    private final ArrayList<Transaction> transactions;
     private final String prevhash;
     private final String hash;
     private final int proof;
 
-    public Block(int index, JSONArray transactions, String prevhash, int proof){
+    public Block(int index, ArrayList<Transaction> transactions, String prevhash, int proof){
         this.index = index;
         this.timestamp = System.currentTimeMillis();
         this.transactions = transactions;
@@ -32,7 +33,7 @@ public class Block {
         return this.timestamp;
     }
 
-    public JSONArray getTransactions(){
+    public ArrayList<Transaction> getTransactions(){
         return this.transactions;
     }
 

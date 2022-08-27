@@ -1,5 +1,7 @@
 package com.blockchain.structures;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -9,7 +11,7 @@ public class BlockchainAccount {
     private String username;
     private String password;
     private final String nodeID;
-    private JSONArray transactionHist;
+    private ArrayList<Transaction> transactionHist;
 
     // public BlockchainAccount(String id, String userName, String password){
     //     this.id = id;
@@ -21,11 +23,11 @@ public class BlockchainAccount {
 
     public BlockchainAccount(String id, String username, String password, String nodeID){
         this.id = id;
-        this.balance = 0;
+        this.balance = 10;
         this.username = username;
         this.password = password;
         this.nodeID = nodeID;
-        this.transactionHist = new JSONArray();
+        this.transactionHist = new ArrayList<Transaction>();
     }
 
     public float getBalance(){
@@ -52,12 +54,12 @@ public class BlockchainAccount {
         return nodeID!=null;
     }
 
-    public boolean addTransaction(JSONObject transaction){
-        if(transaction.get("sender")==id){
-            if(!removeBalance((float) transaction.get("amount"))) return false;
+    public boolean addTransaction(Transaction transaction){
+        if(transaction.getSender().equals(id)){
+            if(!removeBalance((float) transaction.getAmount())) return false;
         }
-        else if(transaction.get("recipient")==id){
-            addBalance((float) transaction.get("amount"));
+        else if(transaction.getRecipient().equals(id)){
+            addBalance((float) transaction.getAmount());
         }
         else return false;
 

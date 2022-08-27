@@ -2,6 +2,7 @@ package com.blockchain.structures;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,7 @@ import org.json.simple.JSONObject;
 public class Blockchain {
     private @Id @GeneratedValue final int chainID; 
     private Block[] chain;
-    private JSONArray transactions;
+    private ArrayList<Transaction> transactions;
     private int blockCount;
     Set<String> nodeIDs;
     HashMap<String, Node> nodes;
@@ -32,7 +33,7 @@ public class Blockchain {
         chain = new Block[100];
         nodeIDs = new HashSet<String>();
         nodes = new HashMap<String, Node>();
-        transactions = new JSONArray();
+        transactions = new ArrayList<Transaction>();
         blockCount = 0;
         accounts = new HashMap<String, BlockchainAccount>();
         accountIDs = new HashSet<String>();
@@ -90,11 +91,7 @@ public class Blockchain {
         if(!accountIDs.contains(sender) || !accountIDs.contains(recipient)) return false;
         
         //TODO: Add timestamp to transaction
-        JSONObject transaction = new JSONObject();
-        transaction.put("sender", sender);
-        transaction.put("recipient", recipient);
-        transaction.put("amount", amount);
-        transaction.put("timestamp", System.currentTimeMillis());
+        Transaction transaction = new Transaction(sender, recipient, amount);
 
         // JSONObject transactionObj = new JSONObject();
         // transactionObj.put(type.toUpperCase(), transaction);
@@ -116,8 +113,8 @@ public class Blockchain {
         String recipient = transaction.getRecipient();
         int amount = transaction.getAmount();
 
-        if(accounts.get(sender).addTransaction(transaction.viewTransaction())){
-            accounts.get(recipient).addTransaction(transaction.viewTransaction());
+        if(accounts.get(sender).addTransaction(transaction)){
+            accounts.get(recipient).addTransaction(transaction);
             transactions.add(transaction);
             return true;
         }
@@ -201,19 +198,30 @@ public class Blockchain {
 
     }
 
-    public BlockchainAccount addAccount(String nodeID){
-        UUID uuid = UUID.randomUUID();
-        String id = String.valueOf(uuid);
+    // public BlockchainAccount addAccount(String nodeID){
+    //     UUID uuid = UUID.randomUUID();
+    //     String id = String.valueOf(uuid);
 
-        if(!accountIDs.add(id)) {
-            return addAccount();
+    //     if(!accountIDs.add(id)) {
+    //         return addAccount();
+    //     }
+
+    //     BlockchainAccount account = new BlockchainAccount(id, String.valueOf(accountIDs.size()), String.valueOf(accountIDs.size()), nodeID);
+    //     accounts.put(id, account);
+
+    //     return account;
+
+    // }
+
+    public BlockchainAccount addAccount(String id){
+        if(!accountIDs.add(id)){
+            return addAccount(String.valueOf(Integer.valueOf(id)+1));
         }
 
-        BlockchainAccount account = new BlockchainAccount(id, String.valueOf(accountIDs.size()), String.valueOf(accountIDs.size()), nodeID);
+        BlockchainAccount account = new BlockchainAccount(id, String.valueOf(accountIDs.size()), String.valueOf(accountIDs.size()), null);
         accounts.put(id, account);
 
         return account;
-
     }
 
     public BlockchainAccount[] getAccounts(){
@@ -226,5 +234,9 @@ public class Blockchain {
             count++;
         }
         return accountsArr;
+    }
+
+    public Object[] getAccountIDs(){
+        return accountIDs.toArray();
     }
 }

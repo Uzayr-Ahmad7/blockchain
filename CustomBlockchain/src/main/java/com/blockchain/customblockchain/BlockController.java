@@ -7,6 +7,7 @@ import com.blockchain.structures.Blockchain;
 import com.blockchain.structures.BlockchainAccount;
 import com.blockchain.structures.Transaction;
 
+import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
@@ -40,18 +41,22 @@ public class BlockController {
         return blockchain.getLastBlock();
     }
 
+    @GetMapping("chain/full")
+    public Block[] viewChain(){
+        return blockchain.getChain();
+    }
+
     @PostMapping("/transactions/new")
     public Transaction newTransaction(@RequestBody Map<String, String> json){
         String sender = json.get("sender");
         String recipient = json.get("recipient");
         int amount = Integer.valueOf(json.get("amount"));
 
-        //TODO: create POST request for account creation
-        // if(blockchain.addTransaction(sender, recipient, amount)){
-        //         return new Transaction(sender, recipient, amount);
-        // }
+        if(blockchain.addTransaction(sender, recipient, amount)){
+                return new Transaction(sender, recipient, amount);
+        }
 
-        return new Transaction(sender, recipient, amount);
+        return new Transaction(null, null, 0);
     }
 
     @PostMapping("accounts/new")
@@ -69,5 +74,9 @@ public class BlockController {
         return blockchain.getAccounts();
     }
 
+    @GetMapping("accounts/IDs")
+    public Object[] getAccountIDs(){
+        return blockchain.getAccountIDs();
+    }
 
 }
