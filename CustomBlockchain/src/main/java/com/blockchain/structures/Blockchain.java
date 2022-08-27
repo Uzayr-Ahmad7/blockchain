@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,7 +44,8 @@ public class Blockchain {
     }
 
     public Block createGenesis(){
-        chain[0] = new Block(0, transactions, "1", 100);
+        ArrayList<Transaction> transac = new ArrayList<>(transactions);
+        chain[0] = new Block(0, transac, "1", 100);
         blockCount++;
         return chain[0];
     }
@@ -57,7 +59,8 @@ public class Blockchain {
          */
 
         //Adds the block to chain
-        chain[blockCount] = new Block(blockCount, this.transactions, prevhash, proof);
+        ArrayList<Transaction> transac = new ArrayList<>(transactions);
+        chain[blockCount] = new Block(blockCount, transac, prevhash, proof);
 
         //Resets the transaction list and count;
         transactions.clear();
@@ -78,24 +81,11 @@ public class Blockchain {
             vote: a vote
          */
 
-
-        // switch(type.toUpperCase()){
-        //     case "PAYMENT":
-        //         break;
-        //     case "VOTE":
-        //         break;
-        //     default:
-        //         return false;
-        // }
-
+        //Checks IDs are valid
         if(!accountIDs.contains(sender) || !accountIDs.contains(recipient)) return false;
         
-        //TODO: Add timestamp to transaction
+        //Creates new transaction
         Transaction transaction = new Transaction(sender, recipient, amount);
-
-        // JSONObject transactionObj = new JSONObject();
-        // transactionObj.put(type.toUpperCase(), transaction);
-
 
         //Checks if payment is valid, then adds transaction to blockchain & account history 
         if(accounts.get(sender).addTransaction(transaction)){
@@ -236,7 +226,15 @@ public class Blockchain {
         return accountsArr;
     }
 
+    public HashMap<String, BlockchainAccount> getAccountMap(){
+        return accounts;
+    }
+
     public Object[] getAccountIDs(){
         return accountIDs.toArray();
+    }
+
+    public ArrayList<Transaction> getTransactions(){
+        return transactions;
     }
 }

@@ -38,6 +38,10 @@ public class BlockchainAccount {
         return id;
     }
 
+    public ArrayList<Transaction> getTransactionHist(){
+        return transactionHist;
+    }
+
     public boolean addBalance(float amount){
         balance+=amount;
         return true;
