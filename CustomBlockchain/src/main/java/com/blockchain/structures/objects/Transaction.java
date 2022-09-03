@@ -1,4 +1,4 @@
-package com.blockchain.structures;
+package com.blockchain.structures.objects;
 
 import org.json.simple.JSONObject;
 
@@ -8,6 +8,10 @@ public class Transaction {
     private int amount;
     private long timestamp;
     //private JSONObject jsonTransaction;
+
+    public Transaction(){
+        super();
+    }
 
     public Transaction(String sender, String recipient, int amount){
         this.sender = sender;

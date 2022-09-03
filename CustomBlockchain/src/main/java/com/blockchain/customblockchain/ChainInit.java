@@ -1,15 +1,11 @@
 package com.blockchain.customblockchain;
 
 import com.blockchain.structures.Blockchain;
+import com.blockchain.structures.Database;
 
 public class ChainInit {
-    private Blockchain blockchain;
-
-    public ChainInit(){
-        blockchain = new Blockchain();
-    }
-
-    public Blockchain getBlockchain(){
-        return blockchain;
-    }
+    // public static void main(String[] args){
+    //     Database database = new Database();
+    //     database.createBlockchain("001");
+    // }
 }

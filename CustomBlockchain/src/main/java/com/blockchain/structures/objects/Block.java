@@ -1,4 +1,4 @@
-package com.blockchain.structures;
+package com.blockchain.structures.objects;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -9,12 +9,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class Block {
-    private final int index;
-    private final long timestamp;
-    private final ArrayList<Transaction> transactions;
-    private final String prevhash;
-    private final String hash;
-    private final int proof;
+    private int index;
+    private long timestamp;
+    private ArrayList<Transaction> transactions;
+    private String prevhash;
+    private String hash;
+    private int proof;
+
+    public Block(){
+        super();
+    }
 
     public Block(int index, ArrayList<Transaction> transactions, String prevhash, int proof){
         this.index = index;
@@ -24,6 +28,7 @@ public class Block {
         this.hash = hashBlock(this);
         this.proof = proof;
     }
+
 
     public int getIndex(){
         return this.index;

@@ -1,4 +1,4 @@
-package com.blockchain.structures;
+package com.blockchain.structures.objects;
 
 public class Node {
     private String urlHost;

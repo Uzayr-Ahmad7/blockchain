@@ -2,13 +2,17 @@ package com.blockchain.customblockchain;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.blockchain.structures.Block;
 import com.blockchain.structures.Blockchain;
-import com.blockchain.structures.BlockchainAccount;
-import com.blockchain.structures.Transaction;
+import com.blockchain.structures.Database;
+import com.blockchain.structures.objects.Block;
+import com.blockchain.structures.objects.BlockchainAccount;
+import com.blockchain.structures.objects.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.PreDestroy;
 
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +23,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class BlockController {
     
-    private Blockchain blockchain = new Blockchain();
+    private Database database = new Database();
+    Blockchain blockchain = database.loadBlockchain("001");
 
     @GetMapping("/mine")
     Block mine(){
-        Block lastBlock = blockchain.getLastBlock();
+        Block lastBlock = blockchain.lastBlock();
         int lastProof = lastBlock.getProof();
         int proof = Blockchain.PoW(lastProof);
 
@@ -33,16 +38,18 @@ public class BlockController {
         String prevhash = Block.hashBlock(lastBlock);
         Block block = blockchain.addBlock(prevhash, proof);
 
+        database.saveBlockchain(blockchain, "001");
+
         return block;
     }
 
     @GetMapping("chain/last")
     public Block viewLastBlock(){
-        return blockchain.getLastBlock();
+        return blockchain.lastBlock();
     }
 
     @GetMapping("chain/full")
-    public Block[] viewChain(){
+    public ArrayList<Block> viewChain(){
         return blockchain.getChain();
     }
 
@@ -56,6 +63,8 @@ public class BlockController {
                 return new Transaction(sender, recipient, amount);
         }
 
+        database.saveBlockchain(blockchain, "001");
+
         return new Transaction(null, null, 0);
     }
 
@@ -66,12 +75,13 @@ public class BlockController {
         // String password = json.get("password");
         // String nodeID = json.get("nodeID");
 
+        database.saveBlockchain(blockchain, "001");
         return blockchain.addAccount();
     }
 
     @GetMapping("accounts/all")
     public BlockchainAccount[] viewAccounts(){
-        return blockchain.getAccounts();
+        return blockchain.accounts();
     }
 
     @GetMapping("accounts/IDs")
@@ -79,4 +89,8 @@ public class BlockController {
         return blockchain.getAccountIDs();
     }
 
+    @PreDestroy
+    public void destroy(){
+        System.out.println("Application Closed");
+    }
 }

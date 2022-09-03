@@ -16,27 +16,32 @@ import javax.persistence.Id;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.blockchain.structures.objects.Block;
+import com.blockchain.structures.objects.BlockchainAccount;
+import com.blockchain.structures.objects.Node;
+import com.blockchain.structures.objects.Transaction;
+
 @Entity
 public class Blockchain {
     private @Id @GeneratedValue final int chainID; 
-    private Block[] chain;
+    private ArrayList<Block> chain;
     private ArrayList<Transaction> transactions;
     private int blockCount;
     Set<String> nodeIDs;
     HashMap<String, Node> nodes;
     Set<String> accountIDs;
-    HashMap<String, BlockchainAccount> accounts;
+    HashMap<String, BlockchainAccount> accountMap;
 
     public Blockchain(){
 
         //Initialise variables
         chainID = 1;
-        chain = new Block[100];
+        chain = new ArrayList<>();
         nodeIDs = new HashSet<String>();
         nodes = new HashMap<String, Node>();
         transactions = new ArrayList<Transaction>();
         blockCount = 0;
-        accounts = new HashMap<String, BlockchainAccount>();
+        accountMap = new HashMap<String, BlockchainAccount>();
         accountIDs = new HashSet<String>();
 
         //Create Genesis Block
@@ -45,9 +50,9 @@ public class Blockchain {
 
     public Block createGenesis(){
         ArrayList<Transaction> transac = new ArrayList<>(transactions);
-        chain[0] = new Block(0, transac, "1", 100);
+        chain.add(new Block(0, transac, "1", 100));
         blockCount++;
-        return chain[0];
+        return chain.get(0);
     }
 
     public Block addBlock(String prevhash, int proof){
@@ -60,14 +65,14 @@ public class Blockchain {
 
         //Adds the block to chain
         ArrayList<Transaction> transac = new ArrayList<>(transactions);
-        chain[blockCount] = new Block(blockCount, transac, prevhash, proof);
+        chain.add(new Block(blockCount, transac, prevhash, proof));
 
         //Resets the transaction list and count;
         transactions.clear();
 
         blockCount++;
     
-        return chain[blockCount-1];
+        return chain.get(chain.size()-1);
     }
 
     public boolean addTransaction(String sender, String recipient, int amount){
@@ -88,8 +93,8 @@ public class Blockchain {
         Transaction transaction = new Transaction(sender, recipient, amount);
 
         //Checks if payment is valid, then adds transaction to blockchain & account history 
-        if(accounts.get(sender).addTransaction(transaction)){
-            accounts.get(recipient).addTransaction(transaction);
+        if(accountMap.get(sender).addTransaction(transaction)){
+            accountMap.get(recipient).addTransaction(transaction);
             transactions.add(transaction);
             return true;
         }
@@ -103,8 +108,8 @@ public class Blockchain {
         String recipient = transaction.getRecipient();
         int amount = transaction.getAmount();
 
-        if(accounts.get(sender).addTransaction(transaction)){
-            accounts.get(recipient).addTransaction(transaction);
+        if(accountMap.get(sender).addTransaction(transaction)){
+            accountMap.get(recipient).addTransaction(transaction);
             transactions.add(transaction);
             return true;
         }
@@ -112,16 +117,30 @@ public class Blockchain {
         return false;
     }
 
-    public Block getLastBlock(){
-        return chain[blockCount-1];
+    public Block mine(){
+        Block lastBlock = lastBlock();
+        int lastProof = lastBlock.getProof();
+        int proof = Blockchain.PoW(lastProof);
+
+        //TODO: get node address and corresponding account id to send transaction
+        //blockchain.addTransaction("0", "recipient", 1);
+
+        String prevhash = Block.hashBlock(lastBlock);
+        Block block = addBlock(prevhash, proof);
+
+        return block;
     }
 
-    public Block[] getChain(){
+    public Block lastBlock(){
+        return chain.get(chain.size()-1);
+    }
+
+    public ArrayList<Block> getChain(){
         return chain;
     }
 
     public int getBlockCount(){
-        return blockCount;
+        return chain.size();
     }
 
     public static int PoW(int lastProof){
@@ -152,13 +171,13 @@ public class Blockchain {
     }
 
     private static boolean validChain(Blockchain blockchain){
-        Block[] chain = blockchain.getChain();
-        Block lastBlock = chain[0];
+        ArrayList<Block> chain = blockchain.getChain();
+        Block lastBlock = chain.get(0);
         int currentIndex = 1;
         Block block;
 
         while(currentIndex<blockchain.getBlockCount()){
-            block = chain[currentIndex];
+            block = chain.get(currentIndex);
 
             // Checks hash of block is correct
             if(block.getPrevhash() != Block.hashBlock(lastBlock)) return false;
@@ -181,53 +200,38 @@ public class Blockchain {
             return addAccount();
         }
         
-        BlockchainAccount account = new BlockchainAccount(id, String.valueOf(accountIDs.size()), String.valueOf(accountIDs.size()), null);
-        accounts.put(id, account);
+        BlockchainAccount account = new BlockchainAccount(id, null);
+        accountMap.put(id, account);
 
         return account;
 
     }
-
-    // public BlockchainAccount addAccount(String nodeID){
-    //     UUID uuid = UUID.randomUUID();
-    //     String id = String.valueOf(uuid);
-
-    //     if(!accountIDs.add(id)) {
-    //         return addAccount();
-    //     }
-
-    //     BlockchainAccount account = new BlockchainAccount(id, String.valueOf(accountIDs.size()), String.valueOf(accountIDs.size()), nodeID);
-    //     accounts.put(id, account);
-
-    //     return account;
-
-    // }
 
     public BlockchainAccount addAccount(String id){
         if(!accountIDs.add(id)){
             return addAccount(String.valueOf(Integer.valueOf(id)+1));
         }
 
-        BlockchainAccount account = new BlockchainAccount(id, String.valueOf(accountIDs.size()), String.valueOf(accountIDs.size()), null);
-        accounts.put(id, account);
+        BlockchainAccount account = new BlockchainAccount(id, null);
+        accountMap.put(id, account);
 
         return account;
     }
 
-    public BlockchainAccount[] getAccounts(){
+    public BlockchainAccount[] accounts(){
         int size = accountIDs.size();
         BlockchainAccount[] accountsArr = new BlockchainAccount[size];
         int count = 0;
 
-        for(String key: accounts.keySet()){
-            accountsArr[count] = accounts.get(key);
+        for(String key: accountMap.keySet()){
+            accountsArr[count] = accountMap.get(key);
             count++;
         }
         return accountsArr;
     }
 
     public HashMap<String, BlockchainAccount> getAccountMap(){
-        return accounts;
+        return accountMap;
     }
 
     public Object[] getAccountIDs(){
