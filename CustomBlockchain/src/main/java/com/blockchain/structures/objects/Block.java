@@ -3,12 +3,13 @@ package com.blockchain.structures.objects;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-public class Block {
+public class Block implements Serializable{
     private int index;
     private long timestamp;
     private ArrayList<Transaction> transactions;
@@ -25,8 +26,8 @@ public class Block {
         this.timestamp = System.currentTimeMillis();
         this.transactions = transactions;
         this.prevhash = prevhash;
-        this.hash = hashBlock(this);
         this.proof = proof;
+        this.hash = hashBlock(this);
     }
 
 
@@ -69,7 +70,7 @@ public class Block {
     public static String hashBlock(Block block){
         String str =  String.valueOf(block.getIndex())+
                         String.valueOf(block.getTimestamp())+
-                        block.getTransactions()+
+                        String.valueOf(block.getTransactions())+
                         block.getPrevhash()+
                         String.valueOf(block.getProof());
                         

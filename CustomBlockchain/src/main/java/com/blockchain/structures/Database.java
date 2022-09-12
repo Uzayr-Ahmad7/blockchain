@@ -7,18 +7,33 @@ public class Database {
     
     public Database(){}
 
-    public Blockchain createBlockchain(String filename){
+    public static Blockchain createBlockchain(String filename){
         //TODO: return error if filename already exists in folder - ensures no files are overwritten
         Blockchain blockchain = new Blockchain();
-        JsonWriter.jsonWrite(blockchain, filename);
+        JsonWriter.write(blockchain, filename);
         return blockchain;
     }
 
-    public void saveBlockchain(Blockchain blockchain, String filename){
-        JsonWriter.jsonWrite(blockchain, filename);
+    public static Blockchain createBlockchain(int port, String filename){
+        //TODO: return error if filename already exists in folder - ensures no files are overwritten
+        Blockchain blockchain = new Blockchain();
+        JsonWriter.write(blockchain, port, filename);
+        return blockchain;
     }
 
-    public Blockchain loadBlockchain(String filename){
+    public static void saveBlockchain(Blockchain blockchain, String filename){
+        JsonWriter.write(blockchain, filename);
+    }
+
+    public static void saveBlockchain(Blockchain blockchain, int port, String filename){
+        JsonWriter.write(blockchain, port, filename);
+    }
+
+    public static Blockchain loadBlockchain(String filename){
         return JsonReader.read(filename);
+    }
+
+    public static Blockchain loadBlockchain(int port, String filename){
+        return JsonReader.read(port, filename);
     }
 }

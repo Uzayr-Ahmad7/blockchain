@@ -1,8 +1,10 @@
 package com.blockchain.structures.objects;
 
+import java.io.Serializable;
+
 import org.json.simple.JSONObject;
 
-public class Transaction {
+public class Transaction implements Serializable{
     private String sender;
     private String recipient;
     private int amount;

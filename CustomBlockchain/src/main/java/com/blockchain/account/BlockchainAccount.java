@@ -1,16 +1,19 @@
-package com.blockchain.structures.objects;
+package com.blockchain.account;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class BlockchainAccount {
+import com.blockchain.structures.objects.Transaction;
+
+public class BlockchainAccount implements Serializable{
     private String id;
     private float balance;
     // private String username;
     // private String password;
-    private String nodeID;
+    private int nodePort;
     private ArrayList<Transaction> transactionHist;
 
     // public BlockchainAccount(String id, String userName, String password){
@@ -24,12 +27,20 @@ public class BlockchainAccount {
     public BlockchainAccount(){
         super();
     }
-    public BlockchainAccount(String id, String nodeID){
+    public BlockchainAccount(String id, int nodePort){
         this.id = id;
         this.balance = 10;
         // this.username = username;
         // this.password = password;
-        this.nodeID = nodeID;
+        this.nodePort = nodePort;
+        this.transactionHist = new ArrayList<Transaction>();
+    }
+
+    public BlockchainAccount(String id){
+        this.id = id;
+        this.balance = 10;
+        // this.username = username;
+        // this.password = password;
         this.transactionHist = new ArrayList<Transaction>();
     }
 
@@ -41,8 +52,8 @@ public class BlockchainAccount {
         return id;
     }
 
-    public String getNodeID(){
-        return nodeID;
+    public int getNodePort(){
+        return nodePort;
     }
 
     public ArrayList<Transaction> getTransactionHist(){

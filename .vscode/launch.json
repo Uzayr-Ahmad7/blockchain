@@ -6,6 +6,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch runDaemon",
+            "request": "launch",
+            "mainClass": "com.blockchain.customblockchain.runDaemon",
+            "projectName": "CustomBlockchain"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestClient",
+            "request": "launch",
+            "mainClass": "com.blockchain.network.TestClient",
+            "projectName": "CustomBlockchain"
+        },
+        {
+            "type": "java",
+            "name": "Launch Daemon",
+            "request": "launch",
+            "mainClass": "com.blockchain.network.Daemon",
+            "projectName": "CustomBlockchain"
+        },
+        {
+            "type": "java",
+            "name": "Launch ChainInit",
+            "request": "launch",
+            "mainClass": "com.blockchain.customblockchain.ChainInit",
+            "projectName": "CustomBlockchain"
+        },
+        {
+            "type": "java",
+            "name": "Launch portTest",
+            "request": "launch",
+            "mainClass": "com.blockchain.network.portTest",
+            "projectName": "CustomBlockchain"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -17,6 +52,5 @@
             "mainClass": "com.blockchain.customblockchain.CustomBlockchainApplication",
             "projectName": "CustomBlockchain"
         }
-
     ]
 }
