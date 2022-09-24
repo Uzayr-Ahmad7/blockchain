@@ -55,4 +55,4 @@ The architecture is currently being adapted from an account-based system stored 
 
 The data security is also being improved, implementing public-private key cryptography to secure transactions & tokens
 
-The updated blockchain shall be updated soon!
+The updated blockchain shall be uploaded soon!
