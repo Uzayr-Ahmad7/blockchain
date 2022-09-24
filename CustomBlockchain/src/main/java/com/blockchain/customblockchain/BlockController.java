@@ -12,7 +12,6 @@ import com.blockchain.structures.objects.Transaction;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.annotation.PreDestroy;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +25,7 @@ public class BlockController {
     private static Node node;
 
     public static void init(int runningPort){
+        /* Creates & runs a new node */
         node = new Node(runningPort);
         node.runServer();
     }
@@ -34,6 +34,7 @@ public class BlockController {
     Block mine(){
         blockchain = node.getBlockchain();        
 
+        //Calculates proof for new block
         Block lastBlock = blockchain.lastBlock();
         int lastProof = lastBlock.getProof();
         int proof = Blockchain.PoW(lastProof);
@@ -41,9 +42,11 @@ public class BlockController {
         //TODO: get node address and corresponding account id to send transaction
         //blockchain.addTransaction("0", "recipient", 1);
 
+        //Creates new block from with proof
         String prevhash = Block.hashBlock(lastBlock);
         Block block = blockchain.createBlock(prevhash, proof);
 
+        //Communicates block to the network
         node.broadcast((Object) block, node.getConnectedPorts());
         Database.saveBlockchain(blockchain, CustomBlockchainApplication.viewPort(), "chain");
 
@@ -66,11 +69,12 @@ public class BlockController {
     public Transaction newTransaction(@RequestBody Map<String, String> json){
         blockchain = node.getBlockchain();        
 
-
+        //Disects the request data
         String sender = json.get("sender");
         String recipient = json.get("recipient");
         int amount = Integer.valueOf(json.get("amount"));
 
+        //Creates the new transaction & broadcasts to network if valid
         if(blockchain.createTransaction(sender, recipient, amount)){
             Transaction transaction = blockchain.getTransactions().get(blockchain.getTransactions().size()-1);
             node.updateBlockchain(blockchain);
@@ -92,7 +96,10 @@ public class BlockController {
         // String nodeID = json.get("nodeID");
         blockchain = node.getBlockchain();        
 
+        //Creates new account
         BlockchainAccount account = blockchain.createAccount();
+
+        //Broadcasts to network
         node.broadcast((Object) account, node.getConnectedPorts());
         Database.saveBlockchain(blockchain, CustomBlockchainApplication.viewPort(), "chain");
         node.updateBlockchain(blockchain);

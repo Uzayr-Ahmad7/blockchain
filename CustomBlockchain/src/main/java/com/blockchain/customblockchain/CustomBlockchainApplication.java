@@ -19,8 +19,13 @@ public class CustomBlockchainApplication implements ApplicationListener<ServletW
 
 	@Override
     public void onApplicationEvent(final ServletWebServerInitializedEvent event) {
+		/*Listens for application start */
+
+		//Gets the running port
         port = event.getWebServer().getPort();
         System.out.println("PORT NUMBER (onApplication): " + port);
+
+		//Initialises the node
 		BlockController.init(port);
     }
 

@@ -45,6 +45,7 @@ public class Node {
     public Blockchain getBlockchain() { return blockchain; }
 
     public void resolveConflicts(){
+        /* Requests all nodes in the network to resolve any conflicts */
         //TODO: COMPLETE
         String msg = "resolve";
         broadcast((Object) msg, connectedPorts);
@@ -56,6 +57,7 @@ public class Node {
     */
 
     private void registerNode(int listeningPort){
+        /* Sends node's listening Port to the daemon to register & connect to the network */
         client.run((Object) listeningPort, 9000);
     }
 
@@ -70,6 +72,7 @@ public class Node {
     }
 
     private void chain2Daemon(Blockchain blockchain){
+        /* Sends the node's chain to the daemon */
         client.run((Object) blockchain, 9000);
     }
 
@@ -79,6 +82,7 @@ public class Node {
      */
 
     public void runServer(){
+        /* Runs the server for the node. Allows the node to receive new transactions/blocks/etc. */
 
         while(server.isRunning()){
             Object object = server.listen();
@@ -115,6 +119,7 @@ public class Node {
                 blockchain.addTransaction(transaction);
             }
             else if(object instanceof Blockchain){
+                //resolves conflicts between node's chain and received chain
                 Blockchain newChain = (Blockchain) object;
 
                 if(blockchain.getChain().size()==1) {

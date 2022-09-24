@@ -5,9 +5,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.blockchain.structures.objects.Block;
-import com.blockchain.structures.objects.Transaction;
-
 public class Client {
 
     private int port;
@@ -15,14 +12,20 @@ public class Client {
     public Client(){}
 
     public void run(Object object, int port){
+        /* Sends the input object to the node with corresponding port
+         * param: <Object> object: object to be sent
+         *        <Integer> port: listening Port the object is to be sent to
+         */
         try {
 
             //Validates client output type
             // if(!(object instanceof Block) || !(object instanceof Transaction)){
             //     throw new ClassNotFoundException("CLIENT OUTPUT OBJECT NEITHER OF TYPE: BLOCK or TRANSACTION");
             // }
-
+            
+            //Establishes connection with the listening Port
             Socket socket = new Socket("localhost", port);
+
             broadcast(object, socket);
             System.out.println("Client sent " + object + " to " + port);
         } catch (UnknownHostException e) {
@@ -35,6 +38,7 @@ public class Client {
     }
 
     private void broadcast(Object object, Socket socket) {
+        /* Writes the object into the output stream */
 
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
